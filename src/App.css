@@ -1,0 +1,15 @@
+.App{
+    background-color: black;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    background-color: #000;  /* Black */
+    height: 100%;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+  
