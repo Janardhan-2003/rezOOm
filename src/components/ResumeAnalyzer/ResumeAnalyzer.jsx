@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import * as pdfjsLib from 'pdfjs-dist';
+import pdfToText from 'react-pdftotext';
 import * as mammoth from 'mammoth';
-
-
+import { generateDocxFromText } from '../../utils/docxGenerator';
+import { FaFile, FaFileAlt,FaRegFileAlt, FaHourglassStart } from "react-icons/fa";
 import Header from '../Header/Header';
 import './ResumeAnalyzer.css';
-pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+
 
 
 const ResumeAnalyzer = () => {
@@ -36,29 +36,26 @@ const ResumeAnalyzer = () => {
     }
   };
 
+  
   const extractTextFromFile = (file) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
   
       reader.onload = async (e) => {
+        const arrayBuffer = e.target.result;
+  
         try {
           if (file.type === 'application/pdf') {
-            const typedArray = new Uint8Array(e.target.result);
-            const pdf = await pdfjsLib.getDocument({ data: typedArray }).promise;
-            let text = '';
-            for (let i = 1; i <= pdf.numPages; i++) {
-              const page = await pdf.getPage(i);
-              const content = await page.getTextContent();
-              text += content.items.map(item => item.str).join(' ') + '\n';
-            }
+            const text = await pdfToText(file);
             resolve(text.trim());
           } else if (file.name.endsWith('.docx')) {
-            const result = await mammoth.extractRawText({ arrayBuffer: e.target.result });
+            const result = await mammoth.extractRawText({ arrayBuffer });
             resolve(result.value.trim());
           } else {
             reject(new Error('Unsupported file format.'));
           }
         } catch (err) {
+          console.error('Text extraction failed:', err);
           reject(new Error('Failed to extract text from file.'));
         }
       };
@@ -106,7 +103,7 @@ const ResumeAnalyzer = () => {
       "Practical improvement steps"
     ]
   },
-  "optimizedResume": "A newly formatted resume tailored for the job description based on best practices. Keep it concise and ATS friendly."
+  "generatedResume": "A newly formatted resume tailored for the job description based on best practices. Keep it ATS friendly. Don't include the same resume text from previous, make adjustments in content and structure. Remove unwanted sections and add keywords related to the projects and tech stack if not present. Move section top or bottom based on best resumes out there in internet."
 }
 
 Resume:
@@ -119,7 +116,7 @@ Instructions:
 - Evaluate ATS score based on keyword and skill alignment
 - List matched and missing keywords
 - Include improvement tips
-- Write a short optimized version of the resume using the same content and aligning it with the job description
+- Additionally, create a new improved format resume based on the provided resume content and job description. Ensure it's well-formatted, concise, and job-targeted and don't include the same structure as previous resume, create a new format with some adjustments in content and structure. Return it under a new JSON key "generatedResume" as plain text (not markdown or HTML).
 - Respond with only the above JSON. No additional commentary or explanations.
 `
             }]
@@ -313,10 +310,7 @@ Instructions:
             {!useTextInput ? (
               <>
                 <label className="upload-label">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M14 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V8L14 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M14 2V8H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
+                <FaFile />
                   Upload Resume (PDF/Word)
                 </label>
                 <input
@@ -333,12 +327,7 @@ Instructions:
             ) : (
               <>
                 <label className="textarea-label">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M14 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V8L14 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M16 13H8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M16 17H8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M10 9H9H8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
+                <FaFileAlt />
                   Resume Content
                 </label>
                 <textarea
@@ -354,12 +343,7 @@ Instructions:
 
           <div className="textarea-group">
             <label className="textarea-label">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M14 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V8L14 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M16 13H8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M16 17H8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M10 9H9H8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
+            <FaRegFileAlt />
               Job Description
             </label>
             <textarea
@@ -395,17 +379,25 @@ Instructions:
             </>
           ) : (
             <>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M21 16V8C20.9996 7.64928 20.9071 7.30481 20.7315 7.00116C20.556 6.69751 20.3037 6.44536 20 6.27L13 2.27C12.696 2.09446 12.3511 2.00205 12 2.00205C11.6489 2.00205 11.304 2.09446 11 2.27L4 6.27C3.69626 6.44536 3.44398 6.69751 3.26846 7.00116C3.09294 7.30481 3.00036 7.64928 3 8V16C3.00036 16.3507 3.09294 16.6952 3.26846 16.9988C3.44398 17.3025 3.69626 17.5546 4 17.73L11 21.73C11.304 21.9055 11.6489 21.9979 12 21.9979C12.3511 21.9979 12.696 21.9055 13 21.73L20 17.73C20.3037 17.5546 20.556 17.3025 20.7315 16.9988C20.9071 16.6952 20.9996 16.3507 21 16Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M7.5 4.21L12 6.81L16.5 4.21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M7.5 19.79V14.6L3 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M21 12L16.5 14.6V19.79" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M12 22.08V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
+              <FaHourglassStart />
               Analyze Resume
             </>
           )}
         </button>
+
+        {analysisResult && (
+          <div className='download-card'>
+          <h1 className='download-heading'>Download your job-optimized resume.</h1>
+          <p className='download-para'>⚠️ Disclaimer: This resume was created using AI assistance. It is intended for personal reference and guidance only.</p>
+  <button
+    className="btn btn-primary mt-3"
+    onClick={() => generateDocxFromText(analysisResult.generatedResume)}
+  >
+    Download Resume (DOCX)
+  </button>
+  </div>
+)}
+
 
         {analysisResult && (
           <div className="results-section">

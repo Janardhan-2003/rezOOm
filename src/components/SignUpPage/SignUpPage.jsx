@@ -12,10 +12,6 @@ import { useEffect } from 'react';
 import './SignUpPage.css';
 
 
-
-
-
-
 function SignupPage() {
   const navigate=useNavigate()
   const [email, setEmail] = useState("");
@@ -105,9 +101,9 @@ function SignupPage() {
   useEffect(() => {
     const token = Cookies.get('authToken');
     if (token) {
-      navigate('/Home', { replace: true });  // 👈 replaces history so back button doesn't return to login
+      navigate('/Home', { replace: true });  
     }
-  }, []);
+  });
 
   return (
     

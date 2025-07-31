@@ -22,18 +22,7 @@
   .logo-section {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-  }
-  
-  .logo-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    background: rgba(0, 212, 255, 0.1);
-    border-radius: 8px;
-    border: 1px solid rgba(0, 212, 255, 0.3);
+    gap: 0.2rem;
   }
   
   .logo-text {
