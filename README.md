@@ -78,7 +78,7 @@ Copy
 Edit
 npm run dev
 Then open http://localhost:3000 in your browser.
-
+```
 🧪 How It Works
 User uploads resume in PDF or DOCX format
 
@@ -109,8 +109,12 @@ Store user history and resume versions
 Resume builder interface with live editing
 
 👤 Author
+
 Janardhan Reddy
-[Connect with me on LinkedIn](https://www.linkedin.com/in/kokatam-janardhan-reddy)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?style=flat-square&logo=linkedin)](https://www.linkedin.com/in/kokatam-janardhan-reddy)
+[![X (Twitter)](https://img.shields.io/badge/X%20(Twitter)-Connect-1DA1F2?style=flat-square&logo=twitter)](https://x.com/jana_kokatam9)
+
+
 
 
 📄 License
