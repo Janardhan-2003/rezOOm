@@ -1,5 +1,6 @@
 // src/SignupPage.js
 import React, { useState } from "react";
+import { FcGoogle } from "react-icons/fc";
 import { auth, provider } from "../Firebase/Firebase";
 import {
   createUserWithEmailAndPassword,
@@ -141,7 +142,10 @@ function SignupPage() {
 
       <div className="text-center mb-3">or</div>
 
-      <button className="btn btn-danger w-100" onClick={handleGoogleLogin}>
+      <button className="btn btn-danger w-100 google-button" onClick={handleGoogleLogin}>
+        <div><FcGoogle /></div>
+        
+        
         Continue with Google
       </button>
 

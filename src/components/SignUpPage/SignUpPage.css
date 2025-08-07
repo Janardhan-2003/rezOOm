@@ -1,22 +1,39 @@
 .bg-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    width: 100vw;
-    background-color: transparent;
+    background-color: rgb(22, 45, 53);
     color: white;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    padding: 1.7rem;
+    border: solid 1px #ccc;
+    border-radius: 18px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 .form-label {
     font-weight: 500;
 }
 .form-control {
-    width: 400px;
+    width: 333px;
+    max-width: 350px;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
+}
+
+button{
+    width: 200px;
+}
+
+.google-button{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background-color: black;
+    border: 0;
+}
+
+.google-button div{
+    font-size: 20px;
+    margin-bottom: 5px;
 }
